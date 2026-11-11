@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cómo funciona un puerto marítimo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700&family=Spectral:wght@500;600&display=swap">
+<style>
+:root{--bg:#f1f4f7;--ink:#0f1f33;--mut:#566679;--panel:#fff;--line:#d3dce5;--sea1:#d9e8f0;--sea2:#b4cfdf;--acc:#a9822f;--accink:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1522;--ink:#e8edf3;--mut:#9aabbd;--panel:#101f31;--line:#22374d;--sea1:#14405d;--sea2:#0c2a42;--acc:#d9b56d;--accink:#0a1522}}
+:root[data-theme="dark"]{--bg:#0a1522;--ink:#e8edf3;--mut:#9aabbd;--panel:#101f31;--line:#22374d;--sea1:#14405d;--sea2:#0c2a42;--acc:#d9b56d;--accink:#0a1522}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 "Hanken Grotesk",system-ui,sans-serif}
+main{max-width:1240px;margin:0 auto;padding:28px 16px 44px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.eye{font:700 12px/1 "Hanken Grotesk",sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin:0 0 10px}
+h1{font:600 clamp(30px,5.5vw,46px)/1.08 Spectral,Georgia,serif;margin:0 0 8px;letter-spacing:-.01em}
+h3{font:600 18px Spectral,Georgia,serif;margin:18px 0 8px}
+.sub{color:var(--mut);margin:0 0 20px;max-width:58ch}
+.scene{background:linear-gradient(180deg,var(--panel),var(--bg));border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 18px 40px -24px rgba(10,30,55,.45)}
+svg{display:block;width:100%;height:auto;font-family:"Hanken Grotesk",system-ui,sans-serif}
+polygon{stroke:rgba(10,20,35,.28);stroke-width:.6;stroke-linejoin:round}
+.win{stroke:none}.rib{stroke:rgba(10,20,35,.22);stroke-width:.8}
+.rip{stroke:#fff;opacity:.45;stroke-width:1.3;fill:none;animation:drift 5s ease-in-out infinite}
+.rip:nth-child(2n){animation-delay:-1.7s}.rip:nth-child(3n){animation-delay:-3.1s}
+.cable{stroke:#0f1f33;stroke-width:1;opacity:.7}
+.route{fill:none;stroke:var(--acc);stroke-width:2.4;stroke-dasharray:7 6;stroke-linecap:round}
+g.it{transition:opacity .45s,filter .25s;filter:drop-shadow(2px 5px 3px rgba(8,20,35,.22))}
+g.it:hover{filter:drop-shadow(2px 5px 3px rgba(8,20,35,.3)) brightness(1.07)}
+g.dim{opacity:.28}
+#tok{transition:transform .9s cubic-bezier(.65,0,.25,1)}
+.bob{animation:bob 1.6s ease-in-out infinite}
+.pin{cursor:pointer}
+.pin rect{fill:var(--panel);stroke:var(--acc);stroke-width:1.5}
+.pin circle{fill:var(--acc)}
+.pin .n{font-weight:700;font-size:13px;fill:var(--accink);text-anchor:middle}
+.pin .t{font-weight:700;font-size:13px;fill:var(--ink)}
+.pin.on rect{fill:var(--acc)}.pin.on circle{fill:var(--panel)}.pin.on .n{fill:var(--ink)}.pin.on .t{fill:var(--accink)}
+.beam{fill:#ff5a3c;stroke:none;animation:scan 2.4s ease-in-out infinite}
+.lift{animation:lift 6s ease-in-out infinite}
+.lamp{animation:blink 2.4s steps(1) infinite}
+@keyframes scan{0%,100%{opacity:.05}50%{opacity:.6}}
+@keyframes lift{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes blink{0%{opacity:1}33%{opacity:.35}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes drift{0%,100%{transform:translateX(0)}50%{transform:translateX(7px)}}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){svg *{animation:none!important}#tok{transition:none}}
+nav{display:grid;grid-template-columns:repeat(var(--n,5),1fr);margin:22px 0 14px;position:relative}
+nav::before{content:"";position:absolute;left:calc(50%/var(--n,5));right:calc(50%/var(--n,5));top:17px;height:2px;background:var(--line)}
+nav button{position:relative;background:none;border:0;color:var(--mut);font:500 14px/1.25 "Hanken Grotesk",sans-serif;cursor:pointer;padding:0 4px;display:flex;flex-direction:column;align-items:center;gap:8px}
+nav b{width:36px;height:36px;border-radius:50%;background:var(--panel);border:2px solid var(--line);display:grid;place-items:center;font:600 16px Spectral,serif;color:var(--ink);transition:.25s}
+nav button[aria-pressed="true"]{color:var(--ink);font-weight:700}
+nav button[aria-pressed="true"] b{background:var(--acc);border-color:var(--acc);color:var(--accink);transform:scale(1.08)}
+button:focus-visible,.pin:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px 26px;display:grid;grid-template-columns:auto 1fr;gap:6px 22px;box-shadow:0 14px 30px -22px rgba(10,30,55,.4)}
+.card>*:not(.pn){animation:fade .4s both}
+.big{font:500 76px/.9 Spectral,serif;color:var(--acc);grid-row:span 3}
+.card h2{font:600 28px/1.15 Spectral,serif;margin:0}
+.card p{margin:4px 0 0;max-width:66ch}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 18px;margin:12px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+dt{color:var(--mut);font-weight:500}dd{margin:0}
+.pn{grid-column:1/-1;display:flex;justify-content:space-between;margin-top:8px}
+.btn,.pn button{font:700 14px "Hanken Grotesk",sans-serif;background:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 18px;cursor:pointer}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--accink)}
+.pn button:disabled{opacity:.35;cursor:default}
+#pan{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:6px 24px 22px}
+#pan[hidden]{display:none}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px}
+label{display:flex;flex-direction:column;font:500 12px "Hanken Grotesk",sans-serif;color:var(--mut);gap:3px}
+input,select,textarea{font:400 14px "Hanken Grotesk",sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}
+input[type=color]{padding:2px;height:34px}
+textarea{min-height:90px;font-family:ui-monospace,monospace;font-size:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.hint{color:var(--mut);font-size:13px;margin:8px 0 0}
+#ls{list-style:none;margin:0;padding:0;max-height:180px;overflow:auto;font-size:14px}
+#ls li{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid var(--line)}
+#ls button{background:none;border:0;color:var(--mut);font-size:18px;cursor:pointer}
+body.edit svg{cursor:crosshair}
+.per{cursor:pointer;outline:none}.ring{fill:none;stroke:var(--acc);stroke-width:2;animation:pulse 2s ease-out infinite;transform-box:fill-box;transform-origin:center}.per:hover .ring,.per:focus-visible .ring{stroke-width:4}.per.dim,.per.dim:hover{opacity:.85}.per.dim .ring{opacity:.3;animation:none}
+@keyframes pulse{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.6);opacity:0}}
+#pc{margin-top:14px;background:var(--panel);border:1px solid var(--acc);border-radius:18px;padding:20px 24px;animation:fade .3s both}#pc[hidden]{display:none}
+.av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font:600 22px Spectral,serif;color:#fff;flex:none}
+@media (max-width:600px){nav button{font-size:11px}nav b{width:32px;height:32px}nav::before{top:15px}.card{grid-template-columns:1fr;padding:18px}.big{font-size:44px;grid-row:auto}dl{grid-template-columns:1fr}dd{margin-bottom:6px}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><div><p class="eye">Maqueta interactiva</p><h1>Cómo funciona un puerto marítimo</h1></div><button class="btn pri" id="ed" aria-expanded="false">Editar maqueta</button></div>
+<p class="sub">Sigue una carga desde que el buque atraca hasta que el camión sale del recinto aduanero. El marcador dorado muestra dónde está en cada paso.</p>
+<div class="scene"><svg id="sc" viewBox="10 15 760 510" role="img" aria-label="Vista isométrica de un puerto con buque, grúa, almacén, oficina de aduana, galpón de reconocimiento y portal de rayos X"></svg></div>
+<nav id="tabs"></nav>
+<section class="card" aria-live="polite">
+<div class="big" id="b"></div><h2 id="t"></h2><div><p id="q"></p>
+<dl><dt>Quién interviene</dt><dd id="w"></dd><dt>Resultado</dt><dd id="r"></dd></dl></div>
+<div class="pn"><button id="pv">Anterior</button><button id="nx">Siguiente</button></div>
+</section>
+<section id="pc" hidden></section>
+<section id="pan" hidden>
+<h3>Agregar pieza</h3>
+<div class="g">
+<label>Tipo<select id="ty"></select></label>
+<label>X<input id="fx" type="number" step=".1" value="6"></label>
+<label>Y<input id="fy" type="number" step=".1" value="4"></label>
+<label>Z (altura)<input id="fz" type="number" step=".1" placeholder="0"></label>
+<label>Ancho<input id="fw" type="number" step=".1" placeholder="auto"></label>
+<label>Fondo<input id="fd" type="number" step=".1" placeholder="auto"></label>
+<label>Alto<input id="fh" type="number" step=".1" placeholder="auto"></label>
+<label>Color<input id="fc" type="color" value="#3f8f6b"></label>
+<label>Paso(s)<input id="fs" placeholder="ej. 1 o 2 3"></label>
+<label>Texto (doc)<input id="fx2" placeholder="DUA"></label>
+</div>
+<p class="hint">Haz clic sobre el suelo de la maqueta para fijar X e Y automáticamente.</p>
+<div class="row"><button class="btn pri" id="add">Agregar pieza</button><button class="btn pri" id="addp">Agregar funcionario</button></div>
+<h3>Piezas en la escena</h3><ul id="ls"></ul>
+<h3>Agregar paso al recorrido</h3>
+<div class="g" style="grid-template-columns:1fr 1fr"><label>Título<input id="st"></label><label>Quién interviene<input id="sw"></label><label>Descripción<input id="sq"></label><label>Resultado<input id="sr"></label></div>
+<p class="hint">El paso se ubica en la posición X, Y de arriba.</p>
+<div class="row"><button class="btn pri" id="adds">Agregar paso</button><button class="btn" id="dels">Quitar último paso</button></div>
+<h3>Datos (JSON)</h3>
+<textarea id="js" aria-label="Datos de la maqueta en JSON"></textarea>
+<div class="row"><button class="btn" id="exp">Exportar</button><button class="btn" id="imp">Importar</button><button class="btn" id="rst">Restablecer</button></div>
+<p class="hint">Para que los cambios sean permanentes en el archivo, pega el JSON exportado en la constante DEF del código.</p>
+</section>
+</main>
+<script>
+const S=30,OX=280,OY=200,K=.87,$=i=>document.getElementById(i);
+const P=(x,y,z)=>[OX+(x-y)*K*S,OY+(x+y)*.5*S-z*S];
+const f1=v=>v.toFixed(1),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sh=(h,k)=>{const n=parseInt(h.slice(1),16);return'#'+[16,8,0].map(s=>Math.min(255,Math.round(((n>>s)&255)*k)).toString(16).padStart(2,'0')).join('')};
+const poly=(a,f,o='')=>`<polygon points="${a.map(p=>P(...p).map(f1).join(',')).join(' ')}" fill="${f}" ${o}/>`;
+const box=(x,y,z,w,d,h,c,o='')=>poly([[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h]],sh(c,1.18),o)+poly([[x,y+d,z],[x+w,y+d,z],[x+w,y+d,z+h],[x,y+d,z+h]],sh(c,.95),o)+poly([[x+w,y,z],[x+w,y+d,z],[x+w,y+d,z+h],[x+w,y,z+h]],sh(c,.72),o);
+const ln=(a,b)=>`<path class="rib" d="M${f1(a[0])} ${f1(a[1])}L${f1(b[0])} ${f1(b[1])}"/>`;
+const cont=(x,y,z,c,w=1.2,d=1,h=.8)=>{let s=box(x,y,z,w,d,h,c);const n=Math.round(w*4);for(let i=1;i<n;i++){const u=x+w*i/n;s+=ln(P(u,y+d,z+.03),P(u,y+d,z+h-.03))}for(let i=1;i<3;i++){const u=y+d*i/3;s+=ln(P(x+w,u,z+.03),P(x+w,u,z+h-.03))}return s};
+const wY=(x0,x1,z0,z1,y,c)=>poly([[x0,y,z0],[x1,y,z0],[x1,y,z1],[x0,y,z1]],c,'class="win"');
+const wX=(y0,y1,z0,z1,x,c)=>poly([[x,y0,z0],[x,y1,z0],[x,y1,z1],[x,y0,z1]],c,'class="win"');
+const cols=['#b5452f','#d29a2b','#2f6f9f','#3f8f6b','#8a4f7d'];
+const path=(a,b,c,d)=>`M${f1(a[0])} ${f1(a[1])}L${f1(b[0])} ${f1(b[1])}M${f1(c[0])} ${f1(c[1])}L${f1(d[0])} ${f1(d[1])}`;
+
+// ---- Catálogo de piezas: para crear un tipo nuevo, agrega aquí una función y sus valores por defecto en TY ----
+const TY={box:{w:1,d:1,h:1,c:'#8d99a3'},cont:{w:1.2,d:1,h:.8,c:'#d29a2b'},building:{w:2.4,d:2.4,h:1.6,c:'#cfd6dd'},ship:{c:'#2b3a55'},crane:{},truck:{c:'#2f6f9f'},xray:{},semaforo:{},shed:{w:3.2,d:2.8,h:2},worker:{},doc:{z:2,txt:''}};
+const R={
+box:o=>box(o.x,o.y,o.z,o.w,o.d,o.h,o.c),
+cont:o=>cont(o.x,o.y,o.z,o.c,o.w,o.d,o.h),
+building:o=>{const{x,y,z,w,d,h,c}=o;let s=box(x,y,z,w,d,h,c)+box(x-.1,y-.1,z+h,w+.2,d+.2,.2,'#6c7a89');for(let i=0;i<Math.floor((w-.3)/.8);i++)s+=wY(x+.25+i*.8,x+.8+i*.8,z+.8,z+Math.min(h-.2,1.3),y+d,'#4f7ea6');for(let j=0;j<Math.floor((d-.3)/.9);j++)s+=wX(y+.2+j*.9,y+.75+j*.9,z+.8,z+Math.min(h-.2,1.3),x+w,'#4f7ea6');return s},
+ship:o=>{const{x,y,z,c}=o;let s=box(x,y,z-.3,8.1,3.2,1.6,c)+poly([[x+8.1,y,z+1.3],[x+9.8,y+1.6,z+1.3],[x+8.1,y+3.2,z+1.3]],sh(c,1.18))+poly([[x+8.1,y+3.2,z-.3],[x+9.8,y+1.6,z-.3],[x+9.8,y+1.6,z+1.3],[x+8.1,y+3.2,z+1.3]],sh(c,.95))+poly([[x+9.8,y+1.6,z-.3],[x+8.1,y,z-.3],[x+8.1,y,z+1.3],[x+9.8,y+1.6,z+1.3]],sh(c,.72))+poly([[x,y+3.2,z+.9],[x+8.1,y+3.2,z+.9],[x+8.1,y+3.2,z+1.1],[x,y+3.2,z+1.1]],'#c9a24a','class="win"');for(let r=0;r<2;r++)for(let i=0;i<5;i++)for(let l=0;l<2;l++){if(i==2&&l==1&&r==0)continue;s+=cont(x+.4+i*1.3,y+.3+r*1.4,z+1.3+l*.8,cols[(i+r+l)%5],1.2,1.2)}return s+box(x+6.9,y+.3,z+1.3,1.4,2.6,1.6,'#eef1f4')+wX(y+.6,y+2.7,z+2.4,z+2.7,x+8.3,'#3b5b7a')+box(x+7.2,y+.7,z+2.9,.9,1.8,.5,'#ffffff')+box(x+7.4,y+1.4,z+3.4,.4,.4,.8,'#b5452f')},
+crane:o=>{const{x,y}=o;let s='';[[0,0],[1.7,0],[0,1.4],[1.7,1.4]].forEach(p=>s+=box(x+p[0],y+p[1],0,.2,.2,4.5,'#d9a31f'));s+=box(x,y,4.5,1.9,1.6,.3,'#d9a31f')+box(x+.7,y-3.7,4.8,.3,5.2,.25,'#e0b43a')+box(x+.5,y-2.8,4.5,.8,1.2,.3,'#444');return s+`<g class="lift"><path class="cable" d="${path(P(x+.85,y-2.6,3.7),P(x+.85,y-2.6,4.5),P(x+.85,y-1.6,3.7),P(x+.85,y-1.6,4.5))}"/>${cont(x+.25,y-2.6,2.9,'#2f6f9f')}</g>`},
+truck:o=>{const{x,y,c}=o;let s=box(x,y+.05,.2,3.6,1.1,.15,'#333')+cont(x,y,.35,c,2.6,1.2,1.2)+box(x+2.7,y,.35,.9,1.2,.9,'#e8ecee')+wX(y+.15,y+1.05,.85,1.2,x+3.6,'#6e8aa6');[.8,1.8,3.1].forEach(a=>{const p=P(x+a,y+1.2,.2);s+=`<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="5.5" fill="#1d2228" stroke="#555"/>`});return s},
+xray:o=>{const{x,y}=o;return box(x,y-.9,0,.9,.7,1.1,'#cfd6dd')+wY(x+.1,x+.8,.55,.95,y-.2,'#3b6b8f')+box(x,y,0,.3,.3,2.2,'#6c7a89')+poly([[x+.15,y+.1,.1],[x+.15,y+1.5,.1],[x+.15,y+1.5,2.1],[x+.15,y+.1,2.1]],'#ff5a3c','class="beam"')+box(x,y+1.3,0,.3,.3,2.2,'#6c7a89')+box(x,y,2,.3,1.6,.3,'#6c7a89')+box(x+1.1,y+.1,0,.15,.15,.7,'#ffffff')+box(x+1.1,y+.1,.35,.15,1.4,.12,'#c0392b')},
+semaforo:o=>{const{x,y}=o;let s=box(x,y,0,.3,.3,2.2,'#4a5156')+box(x-.05,y-.05,1.2,.4,.4,1.2,'#2b3138');['#2ecc71','#f1c40f','#e74c3c'].forEach((k,i)=>{const p=P(x+.2,y+.32,1.35+i*.38);s+=`<circle class="lamp" style="animation-delay:${i*.8}s" cx="${f1(p[0])}" cy="${f1(p[1])}" r="6" fill="${k}" stroke="rgba(0,0,0,.4)"/>`});return s},
+shed:o=>{const{x,y,w,d,h}=o;let s=poly([[x,y,.03],[x+w,y,.03],[x+w,y+d,.03],[x,y+d,.03]],'rgba(217,163,31,.3)','style="stroke:#d9a31f;stroke-dasharray:4 3"');[[0,0],[w-.2,0],[0,d-.2],[w-.2,d-.2]].forEach(p=>s+=box(x+p[0],y+p[1],0,.2,.2,h,'#8d99a3'));return s+box(x,y,h,w,d,.2,'#c9d3dc','style="opacity:.6"')},
+worker:o=>{const{x,y}=o,p=P(x+.15,y+.15,1.35);return box(x,y,0,.3,.3,1,'#e67e22')+`<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="4.5" fill="#f5cba7"/>`+box(x-.03,y-.05,1,.36,.36,.14,'#f1c40f')},
+person:o=>{const p=P(o.x+.2,o.y+.2,1.45),g=P(o.x+.2,o.y+.2,0);return`<ellipse class="ring" cx="${f1(g[0])}" cy="${f1(g[1])}" rx="16" ry="8"/>`+box(o.x,o.y,0,.4,.4,1.05,o.c||'#e67e22')+`<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="6.5" fill="#f5cba7" stroke="rgba(10,20,35,.35)"/>`+box(o.x-.02,o.y-.02,1.62,.44,.44,.12,'#f1c40f')},
+doc:o=>{const p=P(o.x,o.y,o.z);return`<g transform="translate(${f1(p[0]-13)} ${f1(p[1]-34)})"><rect width="26" height="32" rx="2" fill="#fff" stroke="#0f1f33"/><path d="M5 8h16M5 13h16M5 18h10" stroke="#8a97a6" stroke-width="1.4"/>${o.txt?`<text x="13" y="28" text-anchor="middle" font-size="8" font-weight="700" fill="#0f1f33">${esc(o.txt)}</text>`:'<path d="M15 23l3 3 6-8" stroke="#2e9e5b" stroke-width="2.2" fill="none"/>'}</g>`}
+};
+
+// ---- Datos de la maqueta (edítalos aquí o desde el panel "Editar maqueta") ----
+const DEF={items:[
+{t:'ship',x:1.5,y:-3.6,s:'1'},{t:'crane',x:3.5,y:.2,s:'1'},
+{t:'building',x:.4,y:3.2,w:4.2,d:4.5,h:1.8,c:'#b9a98a',s:'1'},
+{t:'cont',x:5.8,y:1.4,z:0,c:'#d29a2b',s:'1'},{t:'cont',x:5.8,y:1.4,z:.8,c:'#b5452f',s:'1'},{t:'cont',x:7.2,y:1.4,z:0,c:'#3f8f6b',s:'1'},
+{t:'building',x:5.4,y:4.2,w:2.4,d:2.4,h:1.6,c:'#cfd6dd',s:'2 3'},{t:'doc',x:6.6,y:5.4,z:2.05,s:'2 3'},
+{t:'semaforo',x:8,y:4.3,s:'3'},{t:'doc',x:7.4,y:4.3,z:2.4,txt:'DUA',s:'3'},
+{t:'shed',x:8.2,y:2,s:'4'},{t:'cont',x:9,y:2.8,z:0,c:'#8a4f7d',s:'4'},
+{t:'box',x:10.3,y:3,z:0,w:.4,d:.4,h:.4,c:'#c8a46a',s:'4'},{t:'box',x:10.3,y:3.5,z:0,w:.4,d:.4,h:.4,c:'#d8b67a',s:'4'},{t:'box',x:10.3,y:3.25,z:.4,w:.4,d:.4,h:.4,c:'#bf9a5e',s:'4'},
+{t:'truck',x:5.2,y:7,c:'#2f6f9f',s:'5'},{t:'xray',x:10.4,y:6.8,s:'5'}],
+steps:[
+{t:'Arribo y descarga',lbl:'Muelle',at:[4.4,1],pin:[392,60],q:'El buque atraca en el muelle y las grúas bajan los contenedores. La mercancía se traslada a los almacenes del recinto, donde queda bajo custodia hasta que se complete el trámite aduanero.',w:'Operador portuario y autoridad del recinto.',r:'Carga en depósito, todavía sin autorización de salida.'},
+{t:'Registro en el sistema',lbl:'SIDUNEA World',at:[2.3,2.6],pin:[266,228],q:'La naviera registra el manifiesto de carga en SIDUNEA World. Luego se relocaliza la carga (se fija dónde está dentro del recinto) y se notifica al agente de aduanas, que representa al importador.',w:'Naviera, aduana y agente de aduanas.',r:'Manifiesto registrado y agente notificado.'},
+{t:'Declaración y selectividad',lbl:'Selectividad',at:[6.8,3.3],pin:[388,318],q:'El agente solicita los regímenes especiales que necesite y carga la Declaración Única de Aduanas (DUA). Un análisis de riesgo asigna el canal de selectividad: verde, amarillo o rojo. Por lo general, a mayor riesgo, más control, hasta la revisión física; el detalle exacto depende de cada aduana.',w:'Agente de aduanas y sistema de análisis de riesgo.',r:'DUA cargada y canal de selectividad asignado.'},
+{t:'Reconocimiento',lbl:'Reconocimiento',at:[8.9,4.3],pin:[495,352],q:'Un funcionario reconocedor verifica la mercancía de forma física y documental para confirmar que coincide con lo declarado. Si falta información, emite un acta de requerimiento que pide lo que falta antes de continuar.',w:'Funcionario reconocedor.',r:'Verificación conforme, o acta de requerimiento.'},
+{t:'Salida y despacho',lbl:'Rayos X',at:[9.6,7.6],pin:[401,345],q:'Con la información validada se genera el pase de salida electrónico. La mercancía se carga en transporte terrestre y pasa por el circuito de inspección no intrusiva (rayos X), que verifica peso y contenido antes de dejar el recinto aduanero.',w:'Aduana, transportista y operador del escáner.',r:'Camión autorizado fuera del recinto.'}],
+people:[
+{n:'Jefe de muelle',r:'Operador portuario',d:'Coordina la descarga del buque y el traslado de los contenedores al recinto. Vela por que la carga quede bajo custodia hasta que se complete el trámite aduanero.',x:2.7,y:1.3,s:'1',c:'#2f6f9f'},
+{n:'Agente de aduanas',r:'Representante del importador',d:'Profesional que tramita el despacho en nombre del importador: recibe la notificación de la carga, solicita los regímenes que se necesiten y carga la Declaración Única de Aduanas (DUA).',x:7.95,y:5.9,s:'2',c:'#8a4f7d'},
+{n:'Oficial de selectividad',r:'Control aduanero',d:'Da seguimiento al canal de selectividad (verde, amarillo o rojo) que asigna el análisis de riesgo y al nivel de control que le corresponde a cada declaración.',x:8.6,y:4.95,s:'3',c:'#3f8f6b'},
+{n:'Funcionario reconocedor',r:'Verificación de mercancía',d:'Verifica la mercancía de forma física y documental para confirmar que coincide con lo declarado. Si falta información, emite un acta de requerimiento que pide lo que falta antes de continuar.',x:9.9,y:4,s:'4',c:'#e67e22'},
+{n:'Operador de escáner',r:'Inspección no intrusiva',d:'Opera el circuito de rayos X que verifica peso y contenido del camión antes de que abandone el recinto aduanero.',x:9.4,y:6.2,s:'5',c:'#b5452f'}]};
+const KEY='puerto-v2',clone=o=>JSON.parse(JSON.stringify(o));
+let DATA;try{DATA=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!DATA||!Array.isArray(DATA.items)||!Array.isArray(DATA.steps)||!DATA.steps.length)DATA=clone(DEF);DATA.people=DATA.people||[];
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(DATA))}catch(e){}};
+
+// ---- Dibujo ----
+const sc=$('sc'),tabs=$('tabs');let cur=1;
+let h='<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sea1)"/><stop offset="1" style="stop-color:var(--sea2)"/></linearGradient><marker id="ar" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--acc)"/></marker></defs>';
+h+=poly([[-1,-5,-.3],[13,-5,-.3],[13,.05,-.3],[-1,.05,-.3]],'url(#sg)','style="stroke:none"');
+for(let i=0;i<6;i++){const a=P(10.5-i*.4,-4.5+i*.6,-.3),b=P(11.6-i*.4,-4.5+i*.6,-.3);h+=`<path class="rip" d="M${f1(a[0])} ${f1(a[1])}L${f1(b[0])} ${f1(b[1])}"/>`}
+h+=box(0,0,-.3,12,8.5,.3,'#9aa3a3')+poly([[0,0,0],[12,0,0],[12,.3,0],[0,.3,0]],'#d9a31f')+poly([[4.5,6.8,0],[12,6.8,0],[12,8.4,0],[4.5,8.4,0]],'#4a5156');
+h+='<path id="rt" class="route" marker-end="url(#ar)"/><g id="ly"></g><g id="pn"></g><g id="tok"><g class="bob"><ellipse rx="17" ry="9.5" fill="var(--acc)" fill-opacity=".3" stroke="var(--acc)" stroke-width="2"/><path d="M0 -4L-8 -18H8Z" fill="var(--acc)" stroke="var(--panel)" stroke-width="1.5"/></g></g>';
+sc.innerHTML=h;
+const pill=(n,x,y,t)=>{const w=t.length*7+30;return`<g class="pin" data-n="${n}" tabindex="0" role="button" aria-label="Paso ${n}: ${esc(t)}" transform="translate(${x} ${y})"><rect x="-11" y="-11" width="${w}" height="22" rx="11"/><circle r="11"/><text class="n" y="4.5">${n}</text><text class="t" x="18" y="4.5">${esc(t)}</text></g>`};
+function render(){
+const it=[...DATA.items.map(o=>[o,-1]),...DATA.people.map((o,i)=>[o,i])].sort((a,b)=>(a[0].x+a[0].y+(a[0].z||0)*.01)-(b[0].x+b[0].y+(b[0].z||0)*.01));
+$('ly').innerHTML=it.map(([o,pi])=>pi>=0?`<g class="it per" data-s="${esc(o.s||'')}" data-p="${pi}" tabindex="0" role="button" aria-label="${esc(o.n)}, ${esc(o.r)}. Ver definición"><title>${esc(o.n)} · ${esc(o.r)}</title>${R.person(o)}</g>`:R[o.t]?`<g class="it" data-s="${esc(o.s||'')}">${R[o.t]({z:0,...TY[o.t],...o})}</g>`:'').join('');
+const pts=DATA.steps.map(s=>P(s.at[0],s.at[1],.02));
+$('rt').setAttribute('d','M'+pts.map(p=>f1(p[0])+' '+f1(p[1])).join('L'));
+$('pn').innerHTML=DATA.steps.map((s,i)=>pill(i+1,s.pin[0],s.pin[1],s.lbl||s.t)).join('');
+$('pn').querySelectorAll('.pin').forEach(p=>{p.onclick=()=>go(+p.dataset.n);p.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();go(+p.dataset.n)}}});
+tabs.style.setProperty('--n',DATA.steps.length);
+tabs.innerHTML='';DATA.steps.forEach((d,i)=>{const b=document.createElement('button');b.innerHTML=`<b>${i+1}</b><span>${esc(d.t)}</span>`;b.onclick=()=>go(i+1);tabs.appendChild(b)});
+$('ls').innerHTML=DATA.items.map((o,i)=>`<li><span>${i+1}. ${o.t} (${o.x}, ${o.y})${o.s?' · paso '+esc(o.s):''}</span><button data-d="${i}" aria-label="Eliminar pieza ${i+1}">×</button></li>`).join('');
+go(Math.min(cur,DATA.steps.length));showP(pcur);
+}
+function go(n){const N=DATA.steps.length,d=DATA.steps[n-1];cur=n;
+$('b').textContent=n;$('t').textContent=d.t;$('q').textContent=d.q||'';$('w').textContent=d.w||'';$('r').textContent=d.r||'';
+const c=document.querySelector('.card');c.querySelectorAll(':scope>*:not(.pn)').forEach(e=>{e.style.animation='none';e.offsetHeight;e.style.animation=''});
+[...tabs.children].forEach((b,i)=>b.setAttribute('aria-pressed',i+1==n));
+sc.querySelectorAll('.pin').forEach(p=>p.classList.toggle('on',p.dataset.n==n));
+sc.querySelectorAll('g.it').forEach(g=>{const s=g.dataset.s;g.classList.toggle('dim',!!s&&!s.split(/[\s,]+/).includes(String(n)))});
+const k=P(d.at[0],d.at[1],0);$('tok').style.transform=`translate(${f1(k[0])}px,${f1(k[1])}px)`;
+$('pv').disabled=n==1;$('nx').disabled=n==N;$('pv').onclick=()=>go(n-1);$('nx').onclick=()=>go(n+1)}
+
+// ---- Editor ----
+$('ty').innerHTML=Object.keys(TY).map(k=>`<option>${k}</option>`).join('');
+const num=i=>$(i).value===''?undefined:+$(i).value;
+$('ed').onclick=()=>{const p=$('pan');p.hidden=!p.hidden;document.body.classList.toggle('edit',!p.hidden);$('ed').setAttribute('aria-expanded',!p.hidden);$('ed').textContent=p.hidden?'Editar maqueta':'Cerrar edición'};
+sc.addEventListener('click',e=>{if($('pan').hidden||e.target.closest('.pin'))return;const q=sc.createSVGPoint();q.x=e.clientX;q.y=e.clientY;const m=q.matrixTransform(sc.getScreenCTM().inverse()),a=(m.x-OX)/(K*S),b=(m.y-OY)/(.5*S),r=v=>Math.round(v*2)/2;$('fx').value=r((a+b)/2);$('fy').value=r((b-a)/2);if($('px1')){$('px1').value=$('fx').value;$('py1').value=$('fy').value}});
+$('add').onclick=()=>{const o=clone({t:$('ty').value,x:num('fx')??0,y:num('fy')??0,z:num('fz'),w:num('fw'),d:num('fd'),h:num('fh'),c:$('fc').value,s:$('fs').value.trim(),txt:$('fx2').value.trim()});DATA.items.push(o);save();render()};
+$('ls').onclick=e=>{const i=e.target.dataset.d;if(i!=null){DATA.items.splice(+i,1);save();render()}};
+$('adds').onclick=()=>{const t=$('st').value.trim();if(!t){$('st').focus();return}const x=num('fx')??0,y=num('fy')??0,p=P(x,y,0);DATA.steps.push({t,lbl:t.slice(0,16),at:[x,y],pin:[Math.round(p[0]),Math.round(p[1])-70],q:$('sq').value,w:$('sw').value,r:$('sr').value});['st','sq','sw','sr'].forEach(i=>$(i).value='');save();cur=DATA.steps.length;render()};
+$('dels').onclick=()=>{if(DATA.steps.length>1){DATA.steps.pop();save();render()}};
+$('exp').onclick=()=>{$('js').value=JSON.stringify(DATA,null,1)};
+$('imp').onclick=()=>{try{const d=JSON.parse($('js').value);if(!Array.isArray(d.items)||!Array.isArray(d.steps)||!d.steps.length)throw 0;DATA=d;DATA.people=DATA.people||[];save();render()}catch(e){$('js').value='JSON no válido. Usa Exportar para ver el formato.'}};
+$('rst').onclick=()=>{DATA=clone(DEF);try{localStorage.removeItem(KEY)}catch(e){}render()};
+// ---- Funcionarios: clic para ver la definición, botón Editar para modificarlos ----
+let pcur=-1;
+function showP(i,ed){const c=$('pc'),p=DATA.people[i];pcur=-1;if(!p){c.hidden=true;return}pcur=i;c.hidden=false;
+const st=(p.s||'').split(/[\s,]+/).filter(n=>DATA.steps[n-1]).map(n=>n+'. '+DATA.steps[n-1].t).join(' · ');
+c.innerHTML=ed?`<h3 style="margin-top:0">Editar funcionario</h3><div class="g" style="grid-template-columns:1fr 1fr"><label>Nombre<input id="pn1" value="${esc(p.n)}"></label><label>Cargo<input id="pr1" value="${esc(p.r)}"></label></div><label style="margin-top:10px">Definición<textarea id="pd1">${esc(p.d)}</textarea></label><div class="g" style="margin-top:10px"><label>Paso(s)<input id="ps1" value="${esc(p.s||'')}"></label><label>X<input id="px1" type="number" step=".1" value="${p.x}"></label><label>Y<input id="py1" type="number" step=".1" value="${p.y}"></label><label>Color<input id="pc1" type="color" value="${p.c||'#e67e22'}"></label></div><div class="row"><button class="btn pri" id="psv">Guardar</button><button class="btn" id="pcn">Cancelar</button><button class="btn" id="pdl">Eliminar</button></div>`:`<div style="display:flex;gap:16px;align-items:flex-start"><div class="av" style="background:${esc(p.c||'#e67e22')}">${esc((p.n||'?')[0])}</div><div style="flex:1"><p class="eye" style="margin:0 0 4px">${esc(p.r)}</p><h3 style="margin:0 0 6px">${esc(p.n)}</h3><p style="margin:0;max-width:70ch">${esc(p.d)}</p>${st?`<p class="hint">Interviene en: ${esc(st)}</p>`:''}</div></div><div class="row"><button class="btn pri" id="ped">Editar</button><button class="btn" id="pcl">Cerrar</button></div>`;
+if(ed){$('psv').onclick=()=>{Object.assign(p,{n:$('pn1').value.trim()||'Funcionario',r:$('pr1').value.trim(),d:$('pd1').value.trim(),s:$('ps1').value.trim(),x:+$('px1').value||0,y:+$('py1').value||0,c:$('pc1').value});save();render()};$('pcn').onclick=()=>showP(i);$('pdl').onclick=()=>{DATA.people.splice(i,1);save();pcur=-1;render()}}else{$('ped').onclick=()=>showP(i,true);$('pcl').onclick=()=>showP(-1)}}
+const openP=g=>{showP(+g.dataset.p);$('pc').scrollIntoView({block:'nearest',behavior:'smooth'})};
+$('ly').addEventListener('click',e=>{const g=e.target.closest('.per');if(g)openP(g)});
+$('ly').addEventListener('keydown',e=>{const g=e.target.closest('.per');if(g&&(e.key=='Enter'||e.key==' ')){e.preventDefault();openP(g)}});
+$('addp').onclick=()=>{DATA.people.push({n:'Nuevo funcionario',r:'Cargo',d:'Describe aquí la función de esta persona.',x:num('fx')??0,y:num('fy')??0,s:String(cur),c:$('fc').value});save();render();showP(DATA.people.length-1,true);$('pc').scrollIntoView({block:'nearest',behavior:'smooth'})};
+render();
+</script>
+</body>
+</html>
